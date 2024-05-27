@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import cookies from "cookiesjs";
 
-export default function Login() {
+export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -17,7 +16,7 @@ export default function Login() {
       return;
     }
     try {
-      let data = await fetch("/api/login", {
+      let data = await fetch("/api/register", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
@@ -26,11 +25,11 @@ export default function Login() {
       } else {
         let res = await data.json();
         console.log({ res });
-        if (!res.status) {
-          setError(res.message);
+        if (!!!res.status) {
+          setError(res.response);
+          console.log({ error });
         } else {
-          cookies({ jwt: res.token }, { username: username });
-          router.push("/home");
+          router.push("/");
         }
       }
     } catch (err) {
@@ -38,7 +37,7 @@ export default function Login() {
     }
   }
   return (
-    <div className="flex justify-center items-center mt-32">
+    <div className="flex justify-center items-center mt-60">
       <div className="w-96 h-2/3 justify-center items-center bg-gradient-to-br p-16 from-cyan-100 to-amber-500 rounded-lg border-cyan-500 border-2">
         <form
           className="text-center"
@@ -46,7 +45,7 @@ export default function Login() {
             handleSubmit(e);
           }}
         >
-          <h1 className="text-4xl font-semibold mb-10 text-black">Login</h1>
+          <h1 className="text-4xl font-semibold mb-10 text-black">Register</h1>
           <label>Username</label>
           <input
             value={username}
@@ -79,8 +78,8 @@ export default function Login() {
             <div className="text-center text-red-600 text-md">{error}</div>
           )}
         </>
-        <div className="text-orange-700 justify-center mt-4 items-center text-center text-md">
-          Don't have an account <a href="/register"> Create One</a>
+        <div className="text-cyan-400 text-center text-lg">
+          Already have an account? <a href="/register"> Log In</a>
         </div>
       </div>
     </div>
