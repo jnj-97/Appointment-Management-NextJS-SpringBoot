@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import Appointment.example.model.User;
-
+import Appointment.example.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,6 +19,11 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 	
 	private final String SECRET_KEY="0a69c4f6f349f35836511e36dd6348cb21035541693ab8dca8fe4c1166039cde";
+	private UserRepository userRepository;
+	
+	public JwtService(UserRepository userRepository) {
+		this.userRepository=userRepository;
+	}
 	
 	public String generateToken(User user) {
 		String token=Jwts.builder().subject(user.getUsername()).issuedAt(new Date(System.currentTimeMillis())).expiration(new Date(System.currentTimeMillis()+24*60*60*1000)).signWith(getSigninKey()).compact();
@@ -43,9 +48,9 @@ public class JwtService {
 		return extractClaim(token,Claims::getSubject);
 	}
 	
-	public Boolean isValid(String token, UserDetails user) {
+	public Boolean isValid(String token) {
 		String username=extractUsername(token);
-		return username.equals(user.getUsername()) && !isTokenExpired(token);
+		return userRepository.findByUserName(username).isPresent() && !isTokenExpired(token);
 	}
 	
 	private Boolean isTokenExpired(String token) {
