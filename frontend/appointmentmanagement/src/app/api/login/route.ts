@@ -22,13 +22,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  username: string,
-  password: string
-) {
+export async function POST(request: NextRequest) {
   try {
-    const requestData = await request.json();
+    const { username, password } = await request.json();
     // Replace with your backend API URL
     const apiUrl = `${process.env.BACKEND_URL}login`;
     const response = await fetch(apiUrl, {
@@ -43,7 +39,7 @@ export async function POST(
     }
 
     const data = await response.json();
-    return data;
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.error();

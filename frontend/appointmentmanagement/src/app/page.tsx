@@ -26,10 +26,10 @@ export default function Login() {
       } else {
         let res = await data.json();
         console.log({ res });
-        if (!res.status) {
-          setError(res.message);
+        if (!!!res.status) {
+          setError(res.token);
         } else {
-          cookies({ jwt: res.token }, { username: username });
+          cookies({ jwt: res.token, username: username });
           router.push("/home");
         }
       }
